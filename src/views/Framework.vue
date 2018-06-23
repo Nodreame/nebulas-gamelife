@@ -8,7 +8,7 @@
         <span class="md-title">游戏人生 - {{pagename}}</span>
 
         <div class="md-toolbar-section-end">
-          <md-button class="md-icon-button" to="/setting">
+          <md-button class="md-icon-button" to="/settings">
               <!-- @click="showSidepanel = !showSidepanel" -->
             <md-icon>person</md-icon>
           </md-button>
@@ -71,7 +71,6 @@
 export default {
   name: 'GameLife-Framework',
   data: () => ({
-    nowTitle: '总览',
     showNavigation: false,
     showSidepanel: false
   }),
