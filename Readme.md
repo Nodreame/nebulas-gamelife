@@ -4,48 +4,48 @@
 
 - [x] 页面基础框架
 - [ ] 基础页面样式开发
-  - [ ] Dashboard
+  - [x] Dashboard
     - [x] PersonCard
-    - [ ] PersonGame(TODO: 游戏logo & 点击进入游戏主页)
+    - [x] PersonGame(TODO: 游戏logo & 点击进入游戏主页)
     - [x] PersonGameLife(TODO: 用80vh困住页面，可滑动)
-  - [ ] MyGames
+  - [x] MyGames
     - [x] GameList
     - [x] Method: Enter GamePage
     - [x] Enter GamePage with address in url
     - [x] Method: Enter GameShop
-  - [ ] Gameshop
+  - [x] Gameshop
     - [x] Banner
     - [x] Tab
-    - [ ] TabContent
-    - [ ] Method: Enter GamePage
-    - [ ] Method: AddGames
+    - [x] TabContent
+    - [x] Method: Enter GamePage
+    - [x] Method: AddGames
   - [ ] GamePage
     - [ ] Background + Title + Desc + Enter url
-  - [ ] Setting
+  - [x] Setting
   - [x] Dialog
-- [ ] 路由跳转
-  - [ ] login -Transaction-> NewUser -> Dashboard (New User)
-  - [ ] login -Transaction-> Dashboard (Old User)
+- [x] 路由跳转
+  - [x] login -Transaction-> NewUser -> Dashboard (New User)
+  - [x] login -Transaction-> Dashboard (Old User)
   - [x] Dashboard[UserInfo] -> SettingPage
-  - [ ] Dashboard[Games] -> MyGamesPage
+  - [x] Dashboard[Games] -> MyGamesPage
   - [x] MyGames[Game] -> GameInfoPage
-  - [ ] Gameshop[Game] -> GameInfoPage
-- [ ] Vue Transaction
-  - [ ] 发起交易
-  - [ ] 获得交易结果
-- [ ] SettingPage
+  - [x] Gameshop[Game] -> GameInfoPage
+- [x] Vue Transaction
+  - [x] 发起交易
+  - [x] 获得交易结果
+- [x] SettingPage
   - [ ] isn't developer
-    - [ ] 弹框修改身份信息
-    - [ ] 可申请成为开发者
+    - [x] 修改身份信息
+    - [x] 可申请成为开发者
   - [ ] is developer
-    - [ ] show 我名下的游戏列表
-    - [ ] 可添加游戏
+    - [x] show 我名下的游戏列表
+    - [x] 可添加游戏
       - [ ] 委托接入 & 自主接入
         - [ ] 委托接入
           - [ ] 说明编写(纯文字)
           - [ ] 联系方式
-        - [ ] 自主接入
-          - [ ] 进程条
-            - [ ] 1.条款说明
-            - [ ] 2.合约合作
+        - [x] 自主接入
+          - [x] 进程条
+            - [x] 1.条款说明
+            - [x] 2.合约合作
             - [ ] 3.上传游戏信息

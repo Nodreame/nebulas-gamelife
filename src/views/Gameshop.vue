@@ -74,39 +74,39 @@
           // this.$router.push('/');
         }
     },
-    // mounted: function () {
-    //     var that = this
-    //     neb.api.call({
-    //       from: "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
-    //       to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
-    //       value: 0,
-    //       contract: {
-    //         function: 'getGameInfoList',
-    //         args: JSON.stringify([50, 0])
-    //       },
-    //       gasPrice: 1000000,
-    //       gasLimit: 2000000
-    //     }).then(function (resp) {
-    //       console.log('resp:', resp);
-    //       var data = JSON.parse(resp.result)
-    //       console.log('data', data);
-    //       console.log('that:', that);
-    //       console.log('this:', this);
-    //       // var gameList = data.data;
-    //       console.log('data.data.length:', data.data.length);
-    //       // var gamelist = [];
-    //       if (data.data) {
-    //         for (let i=0; i<data.data.length; i++) {
-    //           that.gamelist.push(data.data[i]);
-    //         }
-    //         console.log('gamelist:', that.gamelist);
-    //       }
-    //       // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-    //       // console.log('userObj.data:', userObj.data)
-    //       // that.$store.commit('update_userInfo', userObj.data)
-    //       // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-    //       // that.$router.push('/dashboard');
-    //     });
-    // }
+    mounted: function () {
+        var that = this
+        neb.api.call({
+          from: "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+          to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+          value: 0,
+          contract: {
+            function: 'getGameInfoList',
+            args: JSON.stringify([50, 0])
+          },
+          gasPrice: 1000000,
+          gasLimit: 2000000
+        }).then(function (resp) {
+          console.log('resp:', resp);
+          var data = JSON.parse(resp.result)
+          console.log('data', data);
+          console.log('that:', that);
+          console.log('this:', this);
+          // var gameList = data.data;
+          console.log('data.data.length:', data.data.length);
+          // var gamelist = [];
+          if (data.data) {
+            for (let i=0; i<data.data.length; i++) {
+              that.gamelist.push(data.data[i]);
+            }
+            console.log('gamelist:', that.gamelist);
+          }
+          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+          // console.log('userObj.data:', userObj.data)
+          // that.$store.commit('update_userInfo', userObj.data)
+          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+          // that.$router.push('/dashboard');
+        });
+    }
   }
 </script>
