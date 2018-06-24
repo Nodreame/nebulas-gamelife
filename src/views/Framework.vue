@@ -2,12 +2,12 @@
   <div class="page-container">
     <md-app md-mode="fixed">
       <md-app-toolbar md-waterfall class="md-primary" md-elevation="0">
-        <md-button class="md-icon-button" @click="showNavigation = !showNavigation">
+        <md-button class="md-icon-button" @click="showNavigation = !showNavigation" v-if="$route.name !== 'login'">
           <md-icon>menu</md-icon>
         </md-button>
         <span class="md-title">游戏人生 - {{pagename}}</span>
 
-        <div class="md-toolbar-section-end">
+        <div class="md-toolbar-section-end"  v-if="$route.name !== 'login'">
           <md-button class="md-icon-button" to="/settings">
               <!-- @click="showSidepanel = !showSidepanel" -->
             <md-icon>person</md-icon>
@@ -80,8 +80,11 @@ export default {
   computed: {
     pagename () {
       let name = '';
-      // console.log('this.$route:', this.$route);
+      console.log('this.$route:', this.$route);
       switch (this.$route.name) {
+        case 'login':
+          name = '登录';
+          break;
         case 'dashboard':
           name = '总览';
           break;

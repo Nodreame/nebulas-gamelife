@@ -89,6 +89,40 @@
         </md-card>
       </md-app-content>
     </div>
+    <!-- <md-dialog :md-active.sync="showDialog">
+      <md-dialog-title>Preferences</md-dialog-title>
+
+      <md-tabs md-dynamic-height>
+        <md-tab md-label="General">
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+        </md-tab>
+
+        <md-tab md-label="Activity">
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+        </md-tab>
+
+        <md-tab md-label="Account">
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+        </md-tab>
+      </md-tabs>
+
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+        <md-button class="md-primary" @click="showDialog = false">Save</md-button>
+      </md-dialog-actions>
+    </md-dialog> -->
+
+
+
+    <!-- <md-button class="md-primary md-raised" @click="showDialog = true">Prompt</md-button> -->
+    <!-- <span v-if="value">Value: {{ value }}</span> -->
   </div>
 </template>
 <style lang="scss" scoped>
@@ -127,6 +161,9 @@
     name: 'Dashboard',
     data: () => ({
       // momentsExample data
+      showDialog: false,
+      uname: '',
+
       momentlist: [
         { username: 'Nodreame', createdate: 1529606031000, imgurl: '/img/card-content-1.jpg', desc: '6666'},
         { username: 'Nodreame', createdate: 1529606031012, imgurl: '/img/card-content-2.jpg', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.'},
@@ -140,8 +177,8 @@
     }),
     methods: {
       switchPage: function (title) {
-        this.nowTitle = title;
-        this.showNavigation = false;
+        this.nowTitle = title
+        this.showNavigation = false
       }
     },
     computed: {
@@ -162,6 +199,15 @@
       //     return this.$store.state.userInfo.gamelist.length + '个'
       //   }
       // }
+    },
+    created: function () {
+      console.log('created')
+      if (!this.$store.state.userInfo.u_address) {
+        console.log('this.$store:', this.$store);
+        console.log('this.$store.state:', this.$store.state);
+        // jump to login page
+        // this.$router.push('/');
+      }
     }
   }
 </script>

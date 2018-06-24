@@ -32,7 +32,24 @@
     vertical-align: top;
   }
 </style>
-<script lang="ts">
+<script>
+  var HttpRequest = require("nebulas/lib/httprequest");
+  var Neb = require('nebulas/lib/neb');
+  var Account = require('nebulas/lib/account');
+  var Transaction = require('nebulas/lib/transaction');
+
+  // console.info('Neb：', Neb);
+  // console.info('Account:', Account)
+  // console.info('Transaction:', Transaction)
+  // console.info('Utils', Utils)
+  // console.info('Util', Util)
+  // console.info('Api', Api)
+
+  
+  var neb = new Neb();
+  neb.setRequest(new HttpRequest("https://mainnet.nebulas.io"))
+  console.log('neb.api:', neb.api)
+  var that = this;
   export default {
     name: 'Mygames',
     data: () => ({
@@ -51,6 +68,42 @@
       //   console.log('this.$router:', this.$router);
       //   this.$router.push({ name: 'gamepage', params: { address: addr }});
       // }
+    },
+    created: function () {
+      console.log('created')
+      if (!this.$store.state.userInfo.u_address) {
+        // jump to login page
+        this.$router.push('/');
+      }
+    },
+      mounted: function () {
+        var that = this
+        neb.api.call({
+          from: "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+          to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+          value: 0,
+          contract: {
+            function: 'getUserInfoByAddress',
+            args: JSON.stringify([that.$store.state.userInfo.u_address])
+          },
+          gasPrice: 1000000,
+          gasLimit: 2000000
+        }).then(function (data) {
+          console.log('data', data);
+          console.log('that:', that);
+          console.log('this:', this);
+          var userObj = JSON.parse(data.result);
+          console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+          console.log('userObj.data:', userObj.data)
+          that.$store.commit('update_userInfo', userObj.data)
+          console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+          // that.$router.push('/dashboard');
+          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+          // console.log('userObj.data:', userObj.data)
+          // that.$store.commit('update_userInfo', userObj.data)
+          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+          // that.$router.push('/dashboard');
+        });
     }
   }
 </script>
