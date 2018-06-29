@@ -5,17 +5,37 @@ import store from './store'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css'
-import payapi from '@/service'
+// import payapi from '@/service'
 import resource from 'vue-resource'
+import VueLoading from 'vue-loading-template'
+
+import 'nasa.js/dist/nasa.js'
+import HttpRequest  from 'nebulas/lib/httprequest'
+import Neb from 'nebulas/lib/neb'
+// // import Account from 'nebulas/lib/account'
+// // import Transaction from 'nebulas/lib/transaction'
+// // console.info('Neb：', Neb);
+// // console.info('Account:', Account)
+// // console.info('Transaction:', Transaction)
+// // console.info('Utils', Utils)
+// // console.info('Util', Util)
+// // console.info('Api', Api)
+
+const neb = new Neb();
+neb.setRequest(new HttpRequest("https://mainnet.nebulas.io"))
+
 const VueUploadComponent = require('vue-upload-component')
 
 import Clipboard from 'clipboard'
 
 Vue.config.productionTip = false
 Vue.prototype.clipboard  = Clipboard
-Vue.prototype.$payapi     = payapi
+Vue.prototype.neb        = neb
+
+// Vue.prototype.$payapi    = payapi
 Vue.use(VueMaterial)
 Vue.use(resource)
+Vue.use(VueLoading)
 Vue.component('file-upload', VueUploadComponent)
 // Vue.use(Clipboard)
 

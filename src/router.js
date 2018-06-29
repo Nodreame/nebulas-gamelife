@@ -9,6 +9,7 @@ import Mygames from   './views/Mygames.vue'
 import Gameshop from  './views/Gameshop.vue'
 import Gamepage from  './views/Gamepage.vue'
 import Settings from  './views/Settings.vue'
+import Userpage from './views/Userpage.vue'
 
 Vue.use(Router)
 
@@ -48,6 +49,11 @@ export default new Router({
           path: '/gamepage/:addr',
           name: 'gamepage',
           component: Gamepage
+        },
+        {
+          path: '/userpage/:useraddr',
+          name: 'userpage',
+          component: Userpage
         }
       ]
     }

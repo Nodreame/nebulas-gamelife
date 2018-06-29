@@ -100,6 +100,9 @@ export default {
         case 'settings':
           name = '设置';
           break;
+        case 'userpage':
+          name = '用户主页';
+          break;
       }
       return name;
     }

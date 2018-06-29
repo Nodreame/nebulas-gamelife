@@ -76,34 +76,34 @@
         this.$router.push('/');
       }
     },
-      mounted: function () {
-        var that = this
-        neb.api.call({
-          from: "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
-          to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
-          value: 0,
-          contract: {
-            function: 'getUserInfoByAddress',
-            args: JSON.stringify([that.$store.state.userInfo.u_address])
-          },
-          gasPrice: 1000000,
-          gasLimit: 2000000
-        }).then(function (data) {
-          console.log('data', data);
-          console.log('that:', that);
-          console.log('this:', this);
-          var userObj = JSON.parse(data.result);
-          console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-          console.log('userObj.data:', userObj.data)
-          that.$store.commit('update_userInfo', userObj.data)
-          console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-          // that.$router.push('/dashboard');
-          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-          // console.log('userObj.data:', userObj.data)
-          // that.$store.commit('update_userInfo', userObj.data)
-          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-          // that.$router.push('/dashboard');
-        });
+    mounted: function () {
+      var that = this
+      neb.api.call({
+        from: "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+        to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+        value: 0,
+        contract: {
+          function: 'getUserInfoByAddress',
+          args: JSON.stringify([that.$store.state.userInfo.u_address])
+        },
+        gasPrice: 1000000,
+        gasLimit: 2000000
+      }).then(function (data) {
+        console.log('data', data);
+        console.log('that:', that);
+        console.log('this:', this);
+        var userObj = JSON.parse(data.result);
+        console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+        console.log('userObj.data:', userObj.data)
+        that.$store.commit('update_userInfo', userObj.data)
+        console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+        // that.$router.push('/dashboard');
+        // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+        // console.log('userObj.data:', userObj.data)
+        // that.$store.commit('update_userInfo', userObj.data)
+        // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+        // that.$router.push('/dashboard');
+      });
     }
   }
 </script>

@@ -5,22 +5,23 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    dappAddr: 'n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc',
+    // n1kMKbK6KGMMTRn45xU7SssCoDVLGwGmt6J
+    // n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc
+    dappAddr: 'n1kMKbK6KGMMTRn45xU7SssCoDVLGwGmt6J',    // dapp local
     userInfo: {
-      // TODO: tidy obj info
-      u_address: '-',
-      nickname: '-',
+      u_address: '',
+      nickname: '',
       desc: '这家伙很懒，什么也没留下.',
-      sex: '-',
-      email: '-',
-      phone: '-',
-      wechatId: '-',
-      avatar: '',                 // TODO: default avatar
+      sex: '',                   // 0-未知， 1-男， 2-女
+      email: '',
+      phone: '',
+      wechatId: '',
+      avatar: '/img/avatar.png',                 // TODO: default avatar
       type: '',
-      logindate: '-',             // TODO: actually a num
-      createdate: '-',            // TODO: actually a num
+      logindate: '',             // TODO: actually a num
+      createdate: '',            // TODO: actually a num
       gamelist: [],               // TODO: actually a []
-      friendlist: '-',            // TODO: actually a []
+      friendlist: [],            // TODO: actually a []
       momentlist: []              // TODO: actually a []
     },
     gameinfo: {
