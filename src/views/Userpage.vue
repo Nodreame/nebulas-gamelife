@@ -1,19 +1,113 @@
 <template>
   <div class="md-layout flex-column">
-    <div class="md-layout-item md-xsmall-size-90 center">
+    <div class="userpage-header md-layout-item md-xsmall-size-100 md-elevation-10">
       <img :src="userInfo.avatar" alt="头像" width="100" height="100">
       <h1>{{userInfo.nickname}}</h1>
       <p>
         <span>{{userInfo.u_address}}</span>
         <!-- TODO：男女icon -->
+        <!-- TODO: 修改主页背景 -->
       </p>
       <p>{{userInfo.desc}}</p>
-      <button>关注</button>
+      <md-button class="md-raised md-accent">关注</md-button>
     </div>
-    <div class="md-layout-item md-xsmall-size-90">
-      <div class="userpage-intro">个人简介：TODO: if 地址是本人，则可以跳转到修改界面</div>
-      <div class="userpage-moments">游戏人生：TODO：数量</div>
-      <div class="userpage-friends">关注列表：TODO：人数</div>
+    <div class="md-layout-item md-layout md-gutter md-xsmall-size-100 md-elevation-10">
+      <div class="userpage-intro md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-50">
+        <div class="md-elevation-10">
+          <md-toolbar class="md-dense" md-elevation="0">
+            <span>
+              <md-icon class="md-dense">person</md-icon>
+              个人简介
+            </span>
+            <div class="md-toolbar-section-end">
+              <md-button class="md-icon-button" v-if="userInfo.u_address === $store.state.userInfo.u_address" to="/settings">
+                <md-icon>edit</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-app-content style="height: 50vh; display: flex; flex-direction: column; overflow-y: auto;" >
+            <p>性别：{{userInfo.sex}}</p>
+            <p>邮箱：{{userInfo.email}}</p>
+            <p>电话：{{userInfo.phone}}</p>
+            <p>微信：{{userInfo.wechatId}}</p>
+            <p>类型：{{userInfo.type}}</p>
+            <p>账号创建时间：{{userInfo.createdate}}</p>
+            <p>最后登录时间：{{userInfo.logindate}}</p>
+            <!-- <p>我的游戏</p> -->
+          </md-app-content>
+        </div>
+        <!-- TODO: 喜欢的游戏 -->
+      </div>
+      <div class="userpage-moments md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+        <div class="md-elevation-10">
+          <md-toolbar class="md-dense" md-elevation="0">
+            <span>
+              <md-icon class="md-dense">local_play</md-icon>
+              游戏人生
+            </span>
+            <div class="md-toolbar-section-end">
+              <md-button class="md-icon-button"  v-if="userInfo.u_address === $store.state.userInfo.u_address">
+                <md-icon>add</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-app-content style="height: 50vh; display: flex; flex-direction: column; overflow-y: auto;" >
+            <!-- <md-card v-bind:key="moment.createdate" v-for="moment in momentlist"> -->
+            <md-card v-for="moment in userInfo.momentlist" v-bind:key="moment.createdate">
+              <md-card-header>
+                <md-avatar>
+                  <img src="../assets/avatar.jpg" alt="Avatar">
+                </md-avatar>
+                <div class="md-title">{{moment.username}}</div>
+                <p class="md-subhead">{{formatTime(moment.createdate, 'hour')}}</p>
+              </md-card-header>
+              <md-card-media>
+                <img :src="moment.imgurl" alt="People">
+              </md-card-media>
+              <md-card-content>{{moment.desc}}</md-card-content>
+            </md-card>
+          </md-app-content>
+        </div>
+      </div>
+      <div class="userpage-friends md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+        <div class="md-elevation-10">
+          <md-toolbar class="md-dense" md-elevation="0">
+            <span>
+              <md-icon class="md-dense">people</md-icon>
+              关注列表
+            </span>
+            <div class="md-toolbar-section-end">
+              <md-button class="md-icon-button" v-if="userInfo.u_address === $store.state.userInfo.u_address"
+                @click="focusFriend">
+                <md-icon>add</md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-app-content style="height: 50vh; display: flex; flex-direction: column; overflow-y: auto;" >
+            <!-- <md-list v-for="friend in friendlist" v-bind:key="friend.createdate"> -->
+            <md-list v-for="friend in userInfo.friendlist" v-bind:key="friend.createdate">
+              <md-list-item>
+                <md-avatar>
+                  <router-link :to="'/userpage/' + friend.u_address">
+                    <img :src="formatAvatar(friend.avatar)" alt="People">
+                  </router-link>
+                </md-avatar>
+
+                <span class="md-list-item-text">
+                  <router-link :to="'/userpage/' + friend.u_address"  style="color: #FFF;">
+                    {{friend.nickname}}
+                  </router-link>
+                </span>
+
+                <md-button class="md-icon-button md-list-action"  v-if="userInfo.u_address === $store.state.userInfo.u_address"
+                  @click="unfocusFriend(friend.u_address)">
+                  <md-icon class="md-primary">visibility_off</md-icon>
+                </md-button>
+              </md-list-item>
+            </md-list>
+          </md-app-content>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -22,8 +116,10 @@
   .flex-column {
     flex-direction: column;
   }
-  .center {
+  .userpage-header {
     text-align: center;
+    padding: 10px 0;
+    margin-bottom: 10px;
   }
 </style>
 
@@ -34,7 +130,7 @@
     data: () => ({
       userInfo: {
         u_address: '',
-        nickname: '',
+        nickname: '-',
         desc: '这家伙很懒，什么也没留下.',
         sex: '',                   // 0-未知， 1-男， 2-女
         email: '',
@@ -47,7 +143,18 @@
         gamelist: [],               // TODO: actually a []
         friendlist: [],            // TODO: actually a []
         momentlist: []              // TODO: actually a []
-      }
+      },
+      momentlist: [
+        { username: 'Nodreame', createdate: 1530281304000, imgurl: '/img/card-content-1.jpg', desc: '6666'},
+        { username: 'Nodreame', createdate: 1530281388000, imgurl: '/img/card-content-2.jpg', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.'},
+        { username: 'Nodreame', createdate: 1530281355000, imgurl: '/img/card-content-3.jpg', desc: '6666'},
+      ],
+      friendlist: [
+        // u_address+nickname+desc+createdate
+        { u_address: 'aaa', nickname: '123', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.', createdate: 1530281330100, avatar: 'https://placeimg.com/40/40/people/5' },
+        { u_address: 'bbb', nickname: '123', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.', createdate: 1530281330000, avatar: 'https://placeimg.com/40/40/people/5' },
+        { u_address: 'ccc', nickname: '123', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.', createdate: 1530281303000, avatar: 'https://placeimg.com/40/40/people/5' },
+      ]
     }),
     methods: {
       setUserInfo (info) {
@@ -65,16 +172,37 @@
         this.userInfo.gamelist  = info.gamelist? JSON.parse(JSON.stringify(info.gamelist)): this.userInfo.gamelist
         this.userInfo.friendlist= info.friendlist? JSON.parse(JSON.stringify(info.friendlist)): this.userInfo.friendlist
         this.userInfo.momentlist= info.momentlist? JSON.parse(JSON.stringify(info.momentlist)): this.userInfo.momentlist
+      },
+      formatTime: function (date, type) {
+        const dateTime = new Date(date)
+        let strResult = '';
+        type = type? type: 'date'
+        if (type === 'date') {
+          strResult = (dateTime.getFullYear()) + '.'
+             + (dateTime.getMonth() + 1) + '.'
+             + dateTime.getDate();
+        } else if (type === 'hour') {
+          strResult = (dateTime.getFullYear()) + '.'
+             + (dateTime.getMonth() + 1) + '.'
+             + dateTime.getDate() + ' '
+             + dateTime.getHours() + ':'
+             + dateTime.getMinutes() + ':'
+             + dateTime.getSeconds()
+        }
+        return strResult;
+      },
+      formatAvatar: function (url) {
+        return url? url: '/img/avatar.png'
+      },
+      focusFriend: function () {
+        // TODO: 弹窗要求输入地址并检测，如有则询问是否添加
+        alert("开发中，addFriendForUser")
+      },
+      unfocusFriend: function (address) {
+        console.log('unfocus:', address)
+        alert("开发中，deleteFriendForUser")
       }
     },
-    // computed: {
-    //   params () {
-    //     console.log('this.$route.params.useraddr:', this.$route.params.useraddr)
-    //     // this.gameAddress = this.$route.params
-    //     this.userInfo.u_address = this.$route.params.useraddr
-    //     return this.$route.params
-    //   }
-    // },
     created: function () {
       console.log('created:', this.$store.state.userInfo)
       if (!this.$store.state.userInfo.u_address) {

@@ -11,7 +11,7 @@
               </md-button> -->
             </div>
             <div class="md-subhead">
-              <p>最后登录时间：<span>{{formatTime($store.state.userInfo.logindate, 'hour')}}</span></p>
+              <!-- <p>最后登录时间：<span>{{formatTime($store.state.userInfo.logindate, 'hour')}}</span></p> -->
               <p>游戏数：<span>{{$store.state.userInfo.gamelist.length}}</span></p>
               <p>关注人数：<span>{{$store.state.userInfo.friendlist.length}}</span></p>
             </div>
@@ -28,7 +28,8 @@
       <md-card style="margin: 4px;">
         <md-toolbar class="md-dense" md-elevation="0">
           <span>
-            <md-icon class="md-dense">videogame_asset</md-icon>我的游戏
+            <md-icon class="md-dense">videogame_asset</md-icon>
+            我的游戏
           </span>
           <div class="md-toolbar-section-end">
             <md-button class="md-icon-button" to="/mygames">
@@ -52,7 +53,7 @@
                 <md-card-area style="background-color: rgba(0,0,0,.54); color: #fff;">
                   <md-card-header>
                     <span class="md-title">{{game.g_name}}</span>
-                    <span class="md-subhead">{{formatTime(game.add_date, 'date')}}出品</span>
+                    <span class="md-subhead">{{formatTime(game.add_date)}}出品</span>
                   </md-card-header>
                 </md-card-area>
               </router-link>

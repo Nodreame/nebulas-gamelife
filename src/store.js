@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     // n1kMKbK6KGMMTRn45xU7SssCoDVLGwGmt6J
     // n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc
-    dappAddr: 'n1kMKbK6KGMMTRn45xU7SssCoDVLGwGmt6J',    // dapp local
+    dappAddr: 'n1iLwjVqjFaGqte4ockwTEy1pNZp8gh6D9Q',    // dapp local
     userInfo: {
       u_address: '',
       nickname: '',
@@ -24,21 +24,21 @@ export default new Vuex.Store({
       friendlist: [],            // TODO: actually a []
       momentlist: []              // TODO: actually a []
     },
-    gameinfo: {
-      d_address: '-',
-      g_address: '-',
-      g_name: '-',
-      g_imgurl_mini: '-',         // TODO: default img_mini
-      g_imgurl_bg: '-',           // TODO: default img_bg
-      g_imgurl_exlist: '-',       // TODO：actually a []
-      websiteurl: '-',
-      starturl: '-',
-      desc: '-',
-      grade: '-',                 // TODO: actually a num
-      createdate: '-',            // TODO: actually a num
-      commentlist: '-',           // TODO: actually a []
-      achilist: '-',              // TODO: actually a []
-    },
+    // gameinfo: {
+    //   d_address: '-',
+    //   g_address: '-',
+    //   g_name: '-',
+    //   g_imgurl_mini: '-',         // TODO: default img_mini
+    //   g_imgurl_bg: '-',           // TODO: default img_bg
+    //   g_imgurl_exlist: '-',       // TODO：actually a []
+    //   websiteurl: '-',
+    //   starturl: '-',
+    //   desc: '-',
+    //   grade: '-',                 // TODO: actually a num
+    //   createdate: '-',            // TODO: actually a num
+    //   commentlist: '-',           // TODO: actually a []
+    //   achilist: '-',              // TODO: actually a []
+    // },
     userAchi: '-',                // TODO: actually a [] of user's achis
     userAchiList: '-',            // TODO: actually a [] of all user's achisObj
     count: 0
