@@ -4,13 +4,16 @@
   - [ ] GamePage
     - [ ] Background + Title + Desc + Enter url + miniurl
   - [ ] Setting
-    - [ ] Method:updateToDev
-    - [ ] Method:createGame
-    - [ ] Page: games I commit
-    - [ ] Method: modify gameInfo
-  - [ ] isn't developer
-    - [x] 修改身份信息
-    - [x] 可申请成为开发者
+    - [x] Method:updateToDev
+    - [x] Method:createGame
+    - [x] Page: games I commit
+    - [x] Method: modify gameInfo
+    - [ ] modify use baseInfo
+  - [ ] Gameshop
+    - [x] getAllGame
+    - [x] setDefaultPic
+    - [ ] add game for my self
+  - [ ] Gamepage
 
 ## Finish
 

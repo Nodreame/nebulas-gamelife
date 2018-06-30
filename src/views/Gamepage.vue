@@ -1,74 +1,87 @@
 <template>
-  <div>
-    <!-- <h1>{{$router.params.addr}}</h1> -->
-    <!-- <h1>Hello, {{params.addr}}</h1>
-    <md-button @click="addGame">添加游戏</md-button> -->
-    <iframe src="https://plat.tgp.qq.com/middle/login/jump.html?url=https%3A%2F%2Fplat.tgp.qq.com%2Frail%2Fwegame_game_detail.html%3Ftop_class%3D3%26nav_type%3D2%26from%3Dstore_filter.game_list%26unionsite%3Dwegamesite%253A-%253Ajump%253A-%26t%3D1529638474312%26game_id%3D2000016&ticket=bnVsbA%3D%3D" 
-      frameborder="0"  style="width: 100vw; height: 100vh;"></iframe>
-    <!-- <div class="contenner">
-      <div class="logo">
-        <div class="name">SUPER DICTIONARY</div>
-        <div class="img logo_rotate">
-            <img src="img/logo.png" alt="">
-        </div>
-      </div>
-      <div class="noExtension" v-if="isHasExtension" id="noExtension">
-        NOTE: Please install <a target="_blank" href="https://github.com/ChengOrangeJu/WebExtensionWallet">WebExtensionWallet</a>  to use SUPER DICTIONARY
-      </div>
-      <div class="search">
-        <input id="search_value" v-model="search" type="text" :disabled="isHasExtension" @keyup.enter="toSearch">
-        <button id="search" @click="toSearch" :disabled="isHasExtension">search</button>
-      </div>
+  <div class="md-layout flex-column">
+    <!-- <iframe src="https://plat.tgp.qq.com/middle/login/jump.html?url=https%3A%2F%2Fplat.tgp.qq.com%2Frail%2Fwegame_game_detail.html%3Ftop_class%3D3%26nav_type%3D2%26from%3Dstore_filter.game_list%26unionsite%3Dwegamesite%253A-%253Ajump%253A-%26t%3D1529638474312%26game_id%3D2000016&ticket=bnVsbA%3D%3D" 
+      frameborder="0"  style="width: 100vw; height: 100vh;"></iframe> -->
 
-      <div class="result_success" v-if="Object.keys(result).length > 0">
-        <div id=search_banner></div>
-        <p id=search_result>{{result.value}}</p>
-        <div class="author">
-          <i><p> Author:</p> <p id=search_result_author> {{result.author}}</p></i>
-        </div>
-      </div>
+    <div class="gamepage-header md-layout-item md-xsmall-size-100 md-elevation-10">
+      <md-card class="md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-50 md-xsmall-size-100 md-elevation-0">
+        <md-card-header>
+          <!-- <md-card-media> -->
+          <img :src="formatBgImgurl(gameinfo.g_imgurl_mini)" alt="People" width="200" height="200"
+            style="border-radius:0;">
+          <!-- </md-card-media>/ -->
+          <md-card-header-text style="margin-left: 20px;">
+            <div class="md-title">{{gameinfo.g_name}}</div>
+            <div class="md-subhead">{{formatTime(gameinfo.createdate)}}</div><br/>
+            <md-button class="md-raised md-accent">
+              <md-icon>add</md-icon>
+              添加
+            </md-button>
+          </md-card-header-text>
+        </md-card-header>
+      </md-card>
+    </div>
 
-      <div class="result_faile" v-if="fail_add">
-        Failed to find related information. Do you want to <button id="add" @click="toShow">add</button> infromation for "<i id="result_faile_add">{{fail_add}}</i>"?
-      </div>
+    <div class="md-layout-item md-xsmall-size-100 md-elevation-10">
+      <md-tabs md-sync-route>
+        <md-tab id="tab-detail" md-label="游戏详情">
+          <p>简介：{{gameinfo.desc}}</p>
+          <p>官方网站：<a :href="gameinfo.websiteurl" target="_blank">{{gameinfo.websiteurl}}</a></p>
+          <p>游戏截图：暂无</p>
+          <p>游戏评价：开发中</p>
+          <p>
+            <md-button class="md-raised md-primary" :href="gameinfo.websiteurl" target="_blank">
+              <md-icon>play_arrow</md-icon>开始游戏
+            </md-button>
+          </p>
+        </md-tab>
 
-      <div class="add_banner" v-if="isShowAdd">
-        <input type="text" id="add_value" v-model="add_value" placeholder="input contents for your keyword">
-        <button id="push" @click="toAdd">submit</button>
-      </div>
-    </div> -->
+        <md-tab id="tab-achi" md-label="游戏成就">
+          开发中
+        </md-tab>
 
+        <md-tab id="tab-store" md-label="游戏周边">
+          开发中
+        </md-tab>
+      </md-tabs> 
+    </div>
 
   </div>
 </template>
+
+<style lang="scss" scoped>
+  .flex-column {
+    flex-direction: column;
+  }
+  .gamepage-header {
+    padding: 10px 0;
+    margin-bottom: 10px;
+  }
+  .md-card {
+    min-width: 320px;
+    max-width: 768px;
+  }
+</style>
+
 <script>
-  import NebPay from 'nebpay.js'
-  const nebPay = new NebPay()
-
-  var HttpRequest = require("nebulas/lib/httprequest");
-  var Neb = require('nebulas/lib/neb');
-  var Account = require('nebulas/lib/account');
-  var Transaction = require('nebulas/lib/transaction');
-  var neb = new Neb();
-  var that = this
-  neb.setRequest(new HttpRequest("https://mainnet.nebulas.io"))
-  console.log('neb.api:', neb.api)
-
   export default {
     name: 'Gamepage',
     data: () => ({
-
-      // test data
-      // isHasExtension: typeof webExtensionWallet === 'undefined',
-      // search: '',
-      // add_value: '',
-      // isShowAdd: false,
-      // hasResult: false,
-      // fail_add: '',
-      // result: {},
-
-      // for add 
-      gameAddress: ''
+      gameinfo: {
+        // d_address: '',
+        // g_address: '',
+        // g_name: '-',
+        // g_imgurl_mini: '',         // TODO: default img_mini
+        // g_imgurl_bg: '',           // TODO: default img_bg
+        // g_imgurl_exlist: '',       // TODO：actually a []
+        // websiteurl: '',
+        // starturl: '',
+        // desc: '-',
+        // grade: '',                 // TODO: actually a num
+        // createdate: '',            // TODO: actually a num
+        // commentlist: '',           // TODO: actually a []
+        // achilist: '',              // TODO: actually a []
+      }
     }),
     methods: {
       addGame: function () {
@@ -138,9 +151,6 @@
             if (response.status === 1) {
               console.log('write to NEBULAS success!');
               alert('游戏添加成功！');
-              // console.log('this.$router:', this.$router);
-              // reget(response.from)
-              // goDashboard(response.from)
             } else {
               hashCount++;
               setTimeout(() => {
@@ -149,67 +159,58 @@
             }
           });
         }
-
-        // var reget = function (userAddr) {
-        //   neb.api.call({
-        //     from: userAddr,
-        //     to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
-        //     value: 0,
-        //     contract: {
-        //       function: 'getUserInfoByAddress',
-        //       args: JSON.stringify([userAddr])
-        //     },
-        //     gasPrice: 1000000,
-        //     gasLimit: 2000000
-        //   }).then(function (data) {
-        //     console.log('data', data);
-        //     console.log('that:', that);
-        //     console.log('this:', this);
-        //     var userObj = JSON.parse(data.result);
-        //     console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-        //     console.log('userObj.data:', userObj.data)
-        //     that.$store.commit('update_userInfo', userObj.data)
-        //     console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-        //     that.$router.push('/dashboard');
-        //   });
-        // }
-      }
-
-      // toSearch () {
-      //   this.$payapi.get({key: this.search}).then(res => {
-      //     if (!res) {
-      //       this.fail_add = this.search
-      //       this.result = {}
-      //     } else {
-      //       this.fail_add = ''
-      //       this.result = res
-      //     }
-      //   })
-      //   this.isShowAdd = false
-      // },
-      // toShow () {
-      //   this.fail_add = ''
-      //   this.isShowAdd = true
-      // },
-      // toAdd () {
-      //   this.$payapi.save({key: this.search, content: this.add_value}).then(res => {
-      //     console.log('response of push: ' + res)
-      //   })
-      // }
-    },
-    computed: {
-      params () {
-        // console.log('this.$route:', this.$route);
-        this.gameAddress = this.$route.params
-        return this.$route.params;
+      },
+      formatBgImgurl: function (url) {
+        return url? url: '/img/default_imgurl_mini.png'
+      },
+      formatTime: function (date, type) {
+        if (!date) { return '' }
+        const dateTime = new Date(date)
+        let strResult = ''
+        type = type? type: 'date'
+        if (type === 'date') {
+          strResult = (dateTime.getFullYear()) + '.'
+             + (dateTime.getMonth() + 1) + '.'
+             + dateTime.getDate();
+        } else if (type === 'hour') {
+          strResult = (dateTime.getFullYear()) + '.'
+             + (dateTime.getMonth() + 1) + '.'
+             + dateTime.getDate() + ' '
+             + dateTime.getHours() + ':'
+             + dateTime.getMinutes() + ':'
+             + dateTime.getSeconds()
+        }
+        return strResult;
       }
     },
     created: function () {
       console.log('created')
       if (!this.$store.state.userInfo.u_address) {
-        // jump to login page
         // this.$router.push('/');
       }
+    },
+    mounted: function () {
+      console.log('this.$route:', this.$route)
+      console.log('mounted:', this.$route.params.addr)
+      this.gameinfo.g_address = this.$route.params.addr
+      const that = this
+      this.neb.api.call({
+        from:   this.$store.state.dappAddr,
+        to:     this.$store.state.dappAddr,
+        value:  0,
+        contract: {
+          function: 'getGameInfo',
+          args:     JSON.stringify([this.gameinfo.g_address])
+        },
+        gasPrice: 1000000,
+        gasLimit: 2000000
+      }).then((data) => {
+        console.log('data.result:', data.result)
+        this.gameinfo = JSON.parse(data.result).data
+        console.log('this.gameinfo:', this.gameinfo)
+      }, (error) => {
+        console.error('error:', error)
+      })
     }
   }
 </script>

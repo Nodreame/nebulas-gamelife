@@ -215,20 +215,20 @@
       this.userInfo.u_address = this.$route.params.useraddr
       const that = this
       this.neb.api.call({
-          from:   this.$store.state.dappAddr,
-          to:     this.$store.state.dappAddr,
-          value:  0,
-          contract: {
-            function: 'getUserInfoByAddress',
-            args:     JSON.stringify([this.userInfo.u_address])
-          },
-          gasPrice: 1000000,
-          gasLimit: 2000000
-        }).then(function (data) {
-          console.log('data.result:', data.result)
-          // that.userInfo = JSON.parse(data.result)
-          that.setUserInfo(JSON.parse(data.result))
-        });
+        from:   this.$store.state.dappAddr,
+        to:     this.$store.state.dappAddr,
+        value:  0,
+        contract: {
+          function: 'getUserInfoByAddress',
+          args:     JSON.stringify([this.userInfo.u_address])
+        },
+        gasPrice: 1000000,
+        gasLimit: 2000000
+      }).then(function (data) {
+        console.log('data.result:', data.result)
+        // that.userInfo = JSON.parse(data.result)
+        that.setUserInfo(JSON.parse(data.result))
+      })
     }
   }
 </script>

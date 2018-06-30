@@ -9,30 +9,39 @@
           <md-card md-with-hover v-bind:key="game.g_address" v-for="game in gamelist" @click="jump2GamePage(game.g_address)">
             <md-card-media-cover md-solid>
               <router-link :to="'/gamepage/'+game.g_address">
+                <md-card-media md-ratio="1:1">
+                  <img :src="formatBgImgurl(game.g_imgurl_mini)" alt="" style="top: 0; transform: translateY(0);">
+                </md-card-media>
+
+                <md-card-area style="background-color: rgba(0,0,0,.54); color: #fff;">
+                  <md-card-header>
+                    <span class="md-title">{{game.g_name}}</span>
+                    <span class="md-subhead">创建日期：{{formatTime(game.createdate)}}</span>
+                  </md-card-header>
+                </md-card-area>
+              </router-link>
+            </md-card-media-cover>
+          </md-card>
+        </md-tab>
+        <md-tab id="tab-pages" md-label="最新">
+          <md-card md-with-hover v-bind:key="game.g_address" v-for="game in gamelist" @click="jump2GamePage(game.g_address)"
+            v-if="isNewgame(game.createdate)">
+            <md-card-media-cover md-solid>
+              <router-link :to="'/gamepage/'+game.g_address">
               <md-card-media md-ratio="1:1">
-                <img :src="game.g_imgurl_mini" alt="" style="top: 0; transform: translateY(0);">
+                <img :src="formatBgImgurl(game.g_imgurl_mini)" alt="" style="top: 0; transform: translateY(0);">
               </md-card-media>
 
               <md-card-area style="background-color: rgba(0,0,0,.54); color: #fff;">
                 <md-card-header>
                   <span class="md-title">{{game.g_name}}</span>
-                  <span class="md-subhead">{{game.desc}}</span>
+                  <span class="md-subhead">创建日期：{{formatTime(game.createdate)}}</span>
                 </md-card-header>
               </md-card-area>
               </router-link>
             </md-card-media-cover>
           </md-card>
         </md-tab>
-        <md-tab id="tab-pages" md-label="热门">
-          <h3>暂无</h3>
-        </md-tab>
-        <md-tab id="tab-posts" md-label="免费">
-          <h3>暂无</h3>
-        </md-tab>
-        <!-- <md-tab id="tab-favorites" md-label="">
-          Favorites tab
-          <p>Maiores, dolorum. Beatae, optio tempore fuga odit aperiam velit, consequuntur magni inventore sapiente alias sequi odio qui harum dolorem sunt quasi corporis.</p>
-        </md-tab> -->
       </md-tabs>
     </div>
   </div>
@@ -54,32 +63,50 @@
 </style>
 
 <script>
-  var HttpRequest = require("nebulas/lib/httprequest");
-  var Neb = require('nebulas/lib/neb');
-  var Account = require('nebulas/lib/account');
-  var Transaction = require('nebulas/lib/transaction');
-  var neb = new Neb();
-  var that = this
-  neb.setRequest(new HttpRequest("https://mainnet.nebulas.io"))
-  console.log('neb.api:', neb.api)
-
-  
   export default {
     data: () => ({
       gamelist: []
     }),
+    methods: {
+      formatTime: function (date, type) {
+        const dateTime = new Date(date)
+        let strResult = '';
+        type = type? type: 'date'
+        if (type === 'date') {
+          strResult = (dateTime.getFullYear()) + '.'
+             + (dateTime.getMonth() + 1) + '.'
+             + dateTime.getDate();
+        } else if (type === 'hour') {
+          strResult = (dateTime.getFullYear()) + '.'
+             + (dateTime.getMonth() + 1) + '.'
+             + dateTime.getDate() + ' '
+             + dateTime.getHours() + ':'
+             + dateTime.getMinutes() + ':'
+             + dateTime.getSeconds()
+        }
+        return strResult;
+      },
+      formatBgImgurl: function (url) {
+        return url? url: '/img/default_imgurl_mini.png'
+      },
+      isNewgame: function (date) {
+        console.log('Date.now() - date:', Date.now() - date)
+        return (Date.now() - date > 604800000)? false: true
+      }
+    },
     created: function () {
         console.log('created')
         if (!this.$store.state.userInfo.u_address) {
           // jump to login page
-          this.$router.push('/');
+          // this.$router.push('/');
         }
     },
     mounted: function () {
-        var that = this
-        neb.api.call({
-          from: "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
-          to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+        const that = this
+        console.log('this.$store.state.dappAddr:', this.$store.state.dappAddr)
+        this.neb.api.call({
+          from: this.$store.state.dappAddr,
+          to:   this.$store.state.dappAddr,
           value: 0,
           contract: {
             function: 'getGameInfoList',
@@ -88,25 +115,16 @@
           gasPrice: 1000000,
           gasLimit: 2000000
         }).then(function (resp) {
-          console.log('resp:', resp);
-          var data = JSON.parse(resp.result)
-          console.log('data', data);
-          console.log('that:', that);
-          console.log('this:', this);
-          // var gameList = data.data;
-          console.log('data.data.length:', data.data.length);
-          // var gamelist = [];
-          if (data.data) {
-            for (let i=0; i<data.data.length; i++) {
-              that.gamelist.push(data.data[i]);
+          console.log('resp.result:', resp.result)
+          var resultData = JSON.parse(resp.result)
+          console.log('resultData.data.length:', resultData.data.length)
+          var gamelist = [];
+          if (resultData.data) {
+            for (let i=0; i<resultData.data.length; i++) {
+              that.gamelist.push(resultData.data[i]);
             }
             console.log('gamelist:', that.gamelist);
           }
-          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-          // console.log('userObj.data:', userObj.data)
-          // that.$store.commit('update_userInfo', userObj.data)
-          // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-          // that.$router.push('/dashboard');
         });
     }
   }

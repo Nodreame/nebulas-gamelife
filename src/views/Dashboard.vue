@@ -185,7 +185,8 @@
       },
       formatTime: function (date, type) {
         const dateTime = new Date(date)
-        let strResult = '';
+        let strResult = ''
+        type = type? type: 'date'
         if (type === 'date') {
           strResult = (dateTime.getFullYear()) + '.'
              + (dateTime.getMonth() + 1) + '.'

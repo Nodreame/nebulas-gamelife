@@ -169,7 +169,7 @@
             <md-card md-with-hover v-bind:key="game.g_address" v-for="game in $store.state.userInfo.gamelist" v-if="game.isHold">
               <md-card-media-cover md-solid>
                   <md-card-media md-ratio="1:1">
-                    <img :src="game.g_imgurl_mini" alt="" style="top: 0; transform: translateY(0);">
+                    <img :src="formatBgImgurl(game.g_imgurl_mini)" alt="" style="top: 0; transform: translateY(0);">
                   </md-card-media>
                   <md-card-area style="background-color: rgba(0,0,0,.54); color: #fff;">
                     <md-card-header>
@@ -674,15 +674,18 @@
         }
         return strResult;
       },
-      formatSex: function (num) {
-        if (num === 0) {
+      formatSex: function (str) {
+        if (str === '0') {
           return '未知'
-        } else if (num === 1) {
+        } else if (str === '1') {
           return '男'
         } else {
           return '女'
         }
-      }
+      },
+      formatBgImgurl: function (url) {
+        return url? url: '/img/default_imgurl_mini.png'
+      },
     },
     created: function () {
       console.log('created')
