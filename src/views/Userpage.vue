@@ -14,9 +14,22 @@
         <!-- TODO: 修改主页背景 -->
       </p>
       <p>{{userInfo.desc}}</p>
-      <md-button class="md-raised md-accent">关注</md-button>
+      <md-button class="md-raised md-primary" :disabled="isFocusingFriend" v-if="!hasFocus"
+        @click="focusFriend">
+        关注
+        <vue-loading type="spin" color="#d9544e" :size="{ width: '16px', height: '16px'}"
+          v-if="isFocusingFriend">
+        </vue-loading>
+      </md-button>
+      <md-button class="md-raised md-accent" :disabled="isUnfocusingFriend" v-if="hasFocus"
+        @click="unfocusFriend">
+        取消关注
+        <vue-loading type="spin" color="#d9544e" :size="{ width: '16px', height: '16px'}"
+          v-if="isUnfocusingFriend">
+        </vue-loading>
+      </md-button>
     </div>
-    <div class="md-layout-item md-layout md-gutter md-xsmall-size-100 md-elevation-10">
+    <div class="md-layout-item md-layout md-gutter md-xsmall-size-100 md-elevation-10" style="padding: 10px 0">
       <div class="userpage-intro md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-50">
         <div class="md-elevation-10">
           <md-toolbar class="md-dense" md-elevation="0">
@@ -74,7 +87,8 @@
           </md-app-content>
         </div>
       </div>
-      <div class="userpage-friends md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+      <div class="userpage-friends md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-50 md-xsmall-size-100"
+        v-if="userInfo.u_address === $store.state.userInfo.u_address">
         <div class="md-elevation-10">
           <md-toolbar class="md-dense" md-elevation="0">
             <span>
@@ -82,15 +96,14 @@
               关注列表
             </span>
             <div class="md-toolbar-section-end">
-              <md-button class="md-icon-button" v-if="userInfo.u_address === $store.state.userInfo.u_address"
-                @click="focusFriend">
+              <md-button class="md-icon-button" @click="addFocus">
                 <md-icon>add</md-icon>
               </md-button>
             </div>
           </md-toolbar>
           <md-app-content style="height: 50vh; display: flex; flex-direction: column; overflow-y: auto;" >
             <!-- <md-list v-for="friend in friendlist" v-bind:key="friend.createdate"> -->
-            <md-list v-for="friend in userInfo.friendlist" v-bind:key="friend.createdate">
+            <md-list v-for="friend in $store.state.userInfo.friendlist" v-bind:key="friend.createdate">
               <md-list-item>
                 <md-avatar>
                   <router-link :to="'/userpage/' + friend.u_address">
@@ -159,7 +172,9 @@
         { u_address: 'aaa', nickname: '123', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.', createdate: 1530281330100, avatar: 'https://placeimg.com/40/40/people/5' },
         { u_address: 'bbb', nickname: '123', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.', createdate: 1530281330000, avatar: 'https://placeimg.com/40/40/people/5' },
         { u_address: 'ccc', nickname: '123', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.', createdate: 1530281303000, avatar: 'https://placeimg.com/40/40/people/5' },
-      ]
+      ],
+      isFocusingFriend: false,
+      isUnfocusingFriend: false
     }),
     methods: {
       setUserInfo (info) {
@@ -218,12 +233,119 @@
         alert('开发中')
       },
       focusFriend: function () {
-        // TODO: 弹窗要求输入地址并检测，如有则询问是否添加
-        alert("开发中，addFriendForUser")
+        // console.log('this.tempConndata:', this.tempConndata)
+        if (!this.userInfo.u_address) return
+        const contract = this.$store.state.dappAddr
+        const fnName   = 'addFriendforUser'
+        const args     = [this.userInfo.u_address]
+        const options  = { value: '0' }
+        const that     = this
+        Nasa.call(contract, fnName, args, options).then((payId)=> {
+          console.log('payId:', payId);
+          this.isFocusingFriend = true;
+          Nasa.checkTx(payId).then((resp) => {
+            if (resp.status === 0) {
+              console.error('fail:', resp);
+            } else if (resp.status === 1) {
+              console.log('success:', resp);
+              console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              that.neb.api.call({
+                from:   resp.from,
+                to:     resp.to,
+                value:  0,
+                contract: {
+                  function: 'getUserInfoByAddress',
+                  args:     JSON.stringify([resp.from])
+                },
+                gasPrice: 1000000,
+                gasLimit: 2000000
+              }).then((data) =>{
+                console.log('data', data);
+                var userObj = JSON.parse(data.result);
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                console.log('userObj.data:', userObj.data)
+                that.$store.commit('update_userInfo', userObj.data)
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              }, (error) => {
+                console.error('error:', error)
+              });
+            } else {
+              console.log('waiting:', resp);
+            }
+            that.isFocusingFriend = false
+          }, (error) => {
+            console.error('queryPayId error:', error);
+            that.isFocusingFriend = false
+          });
+        }, (error) => {
+          console.error('login error:', error)
+          that.isFocusingFriend = false
+        })
       },
       unfocusFriend: function (address) {
-        console.log('unfocus:', address)
-        alert("开发中，deleteFriendForUser")
+        if (!this.userInfo.u_address) return
+        const contract = this.$store.state.dappAddr
+        const fnName   = 'deleteFriendforUser'
+        const args     = [this.userInfo.u_address]
+        const options  = { value: '0' }
+        const that     = this
+        Nasa.call(contract, fnName, args, options).then((payId)=> {
+          console.log('payId:', payId);
+          this.isUnfocusingFriend = true;
+          Nasa.checkTx(payId).then((resp) => {
+            if (resp.status === 0) {
+              console.error('fail:', resp);
+            } else if (resp.status === 1) {
+              console.log('success:', resp);
+              console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              that.neb.api.call({
+                from:   resp.from,
+                to:     resp.to,
+                value:  0,
+                contract: {
+                  function: 'getUserInfoByAddress',
+                  args:     JSON.stringify([resp.from])
+                },
+                gasPrice: 1000000,
+                gasLimit: 2000000
+              }).then((data) =>{
+                console.log('data', data);
+                var userObj = JSON.parse(data.result);
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                console.log('userObj.data:', userObj.data)
+                that.$store.commit('update_userInfo', userObj.data)
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              }, (error) => {
+                console.error('error:', error)
+              });
+            } else {
+              console.log('waiting:', resp);
+            }
+            that.isUnfocusingFriend = false
+          }, (error) => {
+            console.error('queryPayId error:', error);
+            that.isUnfocusingFriend = false
+          });
+        }, (error) => {
+          console.error('login error:', error)
+          that.isUnfocusingFriend = false
+        })
+      },
+      addFocus: function () {
+        alert('开发中, 通过地址添加好友')
+      }
+    },
+    computed: {
+      hasFocus: function () {
+        console.log('hasFocus')
+        const that  = this
+        let isFocus = false
+        this.$store.state.userInfo.friendlist.forEach(user => {
+          if(user.u_address === that.userInfo.u_address) {
+            isFocus = true
+          }
+        })
+        return isFocus
       }
     },
     created: function () {

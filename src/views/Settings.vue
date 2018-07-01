@@ -152,7 +152,6 @@
               <p><a href="http://172.16.52.19:8080/ipfs/QmWb9xa1ZYFEuy7WcurpfrcfxPCRLsYBHRNoKPWwV5kgfA" target="_blank">IPFS文件上传对接文档地址</a></p>
 
               <md-button class="md-raised md-primary" @click="setDone('second', 'third')">下一步</md-button>
-              <!-- <md-button class="md-raised md-primary" @click="setError()">Set error!</md-button> -->
             </md-step>
 
             <md-step id="third" md-label="提交" :md-done.sync="third" style="text-align: center;">
@@ -554,6 +553,7 @@
         }
         this.isConndataEdit = false
       },
+      // dev
       userLevelup: function () {
         // alert('TODO:updateToDev')
         const contract = this.$store.state.dappAddr
@@ -739,15 +739,13 @@
           console.error('login error:', error);
         });
       },
+      // stepper
       setDone (id, index) {
         this[id] = true
         this.secondStepError = null
         if (index) {
           this.active = index
         }
-      },
-      setError () {
-        this.secondStepError = 'This is an error!'
       },
       // copy_address: function () {
       //   // alert(this.$store.state.userInfo.u_address)
