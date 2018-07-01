@@ -784,7 +784,7 @@
         }
       },
       formatBgImgurl: function (url) {
-        return url? url: '/img/default_imgurl_mini.png'
+        return url? url: './img/default_imgurl_mini.png'
       },
     },
     created: function () {

@@ -87,7 +87,7 @@
         return strResult;
       },
       formatBgImgurl: function (url) {
-        return url? url: '/img/default_imgurl_mini.png'
+        return url? url: './img/default_imgurl_mini.png'
       },
       isNewgame: function (date) {
         console.log('Date.now() - date:', Date.now() - date)
@@ -98,7 +98,7 @@
         console.log('created')
         if (!this.$store.state.userInfo.u_address) {
           // jump to login page
-          // this.$router.push('/');
+          this.$router.push('/')
         }
     },
     mounted: function () {

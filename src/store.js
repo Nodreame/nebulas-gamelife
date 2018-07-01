@@ -16,7 +16,7 @@ export default new Vuex.Store({
       email: '',
       phone: '',
       wechatId: '',
-      avatar: '/img/avatar.png',                 // TODO: default avatar
+      avatar: './img/avatar.png',                 // TODO: default avatar
       type: '',
       logindate: '',             // TODO: actually a num
       createdate: '',            // TODO: actually a num
