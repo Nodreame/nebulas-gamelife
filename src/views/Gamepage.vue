@@ -13,9 +13,13 @@
           <md-card-header-text style="margin-left: 20px;">
             <div class="md-title">{{gameinfo.g_name}}</div>
             <div class="md-subhead">{{formatTime(gameinfo.createdate)}}</div><br/>
-            <md-button class="md-raised md-accent">
+            <md-button class="md-raised md-accent" @click="showAddGameDialog=true"
+              :disabled="isAddingGame">
               <md-icon>add</md-icon>
               添加
+              <vue-loading type="spin" color="#d9544e" :size="{ width: '16px', height: '16px'}"
+                v-if="isAddingGame">
+              </vue-loading>
             </md-button>
           </md-card-header-text>
         </md-card-header>
@@ -46,6 +50,14 @@
       </md-tabs> 
     </div>
 
+    <md-dialog-confirm
+      :md-active.sync="showAddGameDialog"
+      md-title="添加游戏"
+      md-content="确定添加该游戏到你的游戏列表中？"
+      md-confirm-text="确定"
+      md-cancel-text="取消"
+      @md-cancel="showAddGameDialog=false"
+      @md-confirm="onAddGameConfirm" />
   </div>
 </template>
 
@@ -67,23 +79,63 @@
   export default {
     name: 'Gamepage',
     data: () => ({
-      gameinfo: {
-        // d_address: '',
-        // g_address: '',
-        // g_name: '-',
-        // g_imgurl_mini: '',         // TODO: default img_mini
-        // g_imgurl_bg: '',           // TODO: default img_bg
-        // g_imgurl_exlist: '',       // TODO：actually a []
-        // websiteurl: '',
-        // starturl: '',
-        // desc: '-',
-        // grade: '',                 // TODO: actually a num
-        // createdate: '',            // TODO: actually a num
-        // commentlist: '',           // TODO: actually a []
-        // achilist: '',              // TODO: actually a []
-      }
+      gameinfo: {},
+      showAddGameDialog: false,
+      isAddingGame: false
     }),
     methods: {
+      onAddGameConfirm: function () {
+        const contract = this.$store.state.dappAddr
+        const fnName   = 'addGameforUser'
+        const args     = [this.gameinfo.g_address]
+        const options  = { value: '0' }
+        const that     = this;
+        Nasa.call(contract, fnName, args, options).then((payId)=> {
+          console.log('payId:', payId);
+          this.isAddingGame = true;
+          Nasa.checkTx(payId).then((resp) => {
+            if (resp.status === 0) {
+              console.error('fail:', resp);
+              that.isAddingGame = false;
+            } else if (resp.status === 1) {
+              console.log('success:', resp)
+              if (!resp.result.status) { 
+                // TODO: hide btn_add, show 已添加
+                alert(resp.result.msg)                
+              }
+              that.neb.api.call({
+                from:   resp.from,
+                to:     resp.to,
+                value:  0,
+                contract: {
+                  function: 'getUserInfoByAddress',
+                  args:     JSON.stringify([resp.from])
+                },
+                gasPrice: 1000000,
+                gasLimit: 2000000
+              }).then((data) =>{
+                console.log('data', data)
+                var userObj = JSON.parse(data.result)
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                console.log('userObj.data:', userObj.data)
+                that.$store.commit('update_userInfo', userObj.data)
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                that.isAddingGame = false;
+              }, (error) => {
+                console.error('error:', error)
+                that.isAddingGame = false;
+              });
+            } else {
+              console.log('waiting:', resp);
+            }
+          }, (error) => {
+            console.error('queryPayId error:', error);
+          });
+
+        }, (error) => {
+          console.error('login error:', error);
+        });
+      },
       addGame: function () {
         var listenCount = 0;
         var hashCount   = 0;

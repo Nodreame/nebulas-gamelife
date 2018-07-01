@@ -47,7 +47,7 @@
             <md-card-media-cover md-solid>
               <router-link :to="'/gamepage/'+game.g_address">
                 <md-card-media md-ratio="1:1">
-                  <img :src="game.g_imgurl_mini" alt="" style="top: 0; transform: translateY(0);">
+                  <img :src="formatBgImgurl(game.g_imgurl_mini)" alt="" style="top: 0; transform: translateY(0);">
                 </md-card-media>
 
                 <md-card-area style="background-color: rgba(0,0,0,.54); color: #fff;">
@@ -200,7 +200,10 @@
              + dateTime.getSeconds()
         }
         return strResult;
-      }
+      },
+      formatBgImgurl: function (url) {
+        return url? url: '/img/default_imgurl_mini.png'
+      },
     },
     computed: {
       num_games () {
@@ -225,7 +228,7 @@
     created: function () {
       console.log('created:', this.$store.state.userInfo)
       if (!this.$store.state.userInfo.u_address) {
-        // this.$router.push('/');
+        this.$router.push('/');
       }
     }
   }

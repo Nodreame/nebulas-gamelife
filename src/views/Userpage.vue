@@ -2,7 +2,12 @@
   <div class="md-layout flex-column">
     <div class="userpage-header md-layout-item md-xsmall-size-100 md-elevation-10">
       <img :src="userInfo.avatar" alt="头像" width="100" height="100">
-      <h1>{{userInfo.nickname}}</h1>
+      <h1 style="display: flex; justify-content: center; align-items: center;">
+        <span>{{userInfo.nickname}}</span>
+        <md-button class="md-icon-button" @click="shareLink">
+          <md-icon>share</md-icon>
+        </md-button>
+      </h1>
       <p>
         <span>{{userInfo.u_address}}</span>
         <!-- TODO：男女icon -->
@@ -26,13 +31,13 @@
             </div>
           </md-toolbar>
           <md-app-content style="height: 50vh; display: flex; flex-direction: column; overflow-y: auto;" >
-            <p>性别：{{userInfo.sex}}</p>
+            <p>性别：{{formatSex(userInfo.sex)}}</p>
             <p>邮箱：{{userInfo.email}}</p>
             <p>电话：{{userInfo.phone}}</p>
             <p>微信：{{userInfo.wechatId}}</p>
-            <p>类型：{{userInfo.type}}</p>
-            <p>账号创建时间：{{userInfo.createdate}}</p>
-            <p>最后登录时间：{{userInfo.logindate}}</p>
+            <p>类型：{{formatDev(userInfo.type)}}</p>
+            <p>账号创建时间：{{formatTime(userInfo.createdate)}}</p>
+            <p>最后登录时间：{{formatTime(userInfo.logindate)}}</p>
             <!-- <p>我的游戏</p> -->
           </md-app-content>
         </div>
@@ -172,6 +177,7 @@
         this.userInfo.gamelist  = info.gamelist? JSON.parse(JSON.stringify(info.gamelist)): this.userInfo.gamelist
         this.userInfo.friendlist= info.friendlist? JSON.parse(JSON.stringify(info.friendlist)): this.userInfo.friendlist
         this.userInfo.momentlist= info.momentlist? JSON.parse(JSON.stringify(info.momentlist)): this.userInfo.momentlist
+        console.log('this.userInfo:', this.userInfo)
       },
       formatTime: function (date, type) {
         const dateTime = new Date(date)
@@ -191,8 +197,25 @@
         }
         return strResult;
       },
+      formatSex: function (str) {
+        if (str === '0') {
+          return '未知'
+        } else if (str === '1') {
+          return '男'
+        } else {
+          return '女'
+        }
+      },
+      formatDev: function (str) {
+        return str === '0'? '玩家': '开发者'
+      },
       formatAvatar: function (url) {
         return url? url: '/img/avatar.png'
+      },
+      shareLink: function () {
+        // TODO: copy link & alert
+        // alert('链接已复制，发送给小伙伴们一起来加入吧~')
+        alert('开发中')
       },
       focusFriend: function () {
         // TODO: 弹窗要求输入地址并检测，如有则询问是否添加
@@ -226,8 +249,9 @@
         gasLimit: 2000000
       }).then(function (data) {
         console.log('data.result:', data.result)
-        // that.userInfo = JSON.parse(data.result)
-        that.setUserInfo(JSON.parse(data.result))
+        const resultData = JSON.parse(data.result)
+        console.log('resultData.data:', resultData.data)
+        that.setUserInfo(resultData.data)
       })
     }
   }

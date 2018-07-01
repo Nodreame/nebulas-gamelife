@@ -1,10 +1,10 @@
 <template>
   <div>
-    <md-card md-with-hover v-bind:key="game.g_address" v-for="game in gamelist" @click="jump2GamePage(game.address)">
+    <md-card md-with-hover v-bind:key="game.g_address" v-for="game in $store.state.userInfo.gamelist" @click="jump2GamePage(game.address)">
       <md-card-media-cover md-solid>
         <router-link :to="'/gamepage/' + game.g_address">
         <md-card-media md-ratio="1:1">
-          <img :src="game.g_imgurl_mini" alt="" style="top: 0; transform: translateY(0);">
+          <img :src="formatBgImgurl(game.g_imgurl_mini)" alt="" style="top: 0; transform: translateY(0);">
         </md-card-media>
 
         <md-card-area style="background-color: rgba(0,0,0,.54); color: #fff;">
@@ -16,8 +16,7 @@
         </router-link>
       </md-card-media-cover>
     </md-card>
-    <md-snackbar :md-position="position" :md-duration="isInfinity ? Infinity : duration" 
-      :md-active.sync="showSnackbar" md-persistent>
+    <md-snackbar md-position="center" :md-duration="Infinity" :md-active.sync="showSnackbar" md-persistent>
       <span>商店里又有新游戏啦，快去看看吧!</span>
       <!-- <md-button class="md-primary" to="/mygames" @click="showSnackbar=false">知道了</md-button> -->
       <md-button class="md-primary" to="/gameshop">前往</md-button>
@@ -33,22 +32,6 @@
   }
 </style>
 <script>
-  // var HttpRequest = require("nebulas/lib/httprequest");
-  // var Neb = require('nebulas/lib/neb');
-  // var Account = require('nebulas/lib/account');
-  // var Transaction = require('nebulas/lib/transaction');
-
-  // console.info('Neb：', Neb);
-  // console.info('Account:', Account)
-  // console.info('Transaction:', Transaction)
-  // console.info('Utils', Utils)
-  // console.info('Util', Util)
-  // console.info('Api', Api)
-  
-  // var neb = new Neb();
-  // neb.setRequest(new HttpRequest("https://mainnet.nebulas.io"))
-  // console.log('neb.api:', neb.api)
-  // var that = this;
   export default {
     name: 'Mygames',
     data: () => ({
@@ -57,16 +40,12 @@
         { g_address: 'bbbbbb', g_name: '古剑奇谭', desc: '哈哈哈哈', g_imgurl_mini: '/img/game-2.jpg', isHold: false},
         { g_address: 'cccccc', g_name: '轩辕剑', desc: '哈哈哈', g_imgurl_mini: '/img/game-3.jpg', isHold: false}
       ],
-      showSnackbar: true,
-      position: 'center',
-      isInfinity: true
+      showSnackbar: true
     }),
     methods: {
-      // jump2GamePage: function (addr) {
-      //   console.log('click:', addr);
-      //   console.log('this.$router:', this.$router);
-      //   this.$router.push({ name: 'gamepage', params: { address: addr }});
-      // }
+      formatBgImgurl: function (url) {
+        return url? url: '/img/default_imgurl_mini.png'
+      },
     },
     created: function () {
       console.log('created')
@@ -78,8 +57,8 @@
     mounted: function () {
       var that = this
       this.neb.api.call({
-        from: "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
-        to:   "n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc",
+        from: this.$store.state.dappAddr,
+        to:   this.$store.state.dappAddr,
         value: 0,
         contract: {
           function: 'getUserInfoByAddress',
@@ -90,20 +69,11 @@
       }).then(function (data) {
         console.log('data', data);
         console.log('that:', that);
-        // console.log('this:', this);
         var userObj = JSON.parse(data.result);
         console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
         console.log('userObj.data:', userObj.data)
         that.$store.commit('update_userInfo', userObj.data)
         console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-
-
-        // that.$router.push('/dashboard');
-        // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-        // console.log('userObj.data:', userObj.data)
-        // that.$store.commit('update_userInfo', userObj.data)
-        // console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
-        // that.$router.push('/dashboard');
       });
     }
   }

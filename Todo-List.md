@@ -14,6 +14,13 @@
     - [x] setDefaultPic
     - [ ] add game for my self
   - [ ] Gamepage
+    - [ ] add game for my self
+  - [ ] userpage
+    - [ ] follow
+    - [ ] unfollow
+  - [x] mygames:ok
+  - [ ] Dashboard
+    - [ ] add moments
 
 ## Finish
 

@@ -7,15 +7,18 @@
             <md-subheader>
               基础信息
               <div class="md-toolbar-section-end">
-                <md-button class="md-icon-button md-dense" @click="switchBasedataState()" v-if="!isBasedataEdit">
+                <md-button class="md-icon-button md-dense" @click="switchBasedataState()" v-if="!isBasedataEdit && !isCommitingBaseInfo">
                   <md-icon>edit</md-icon>
                 </md-button>
-                <md-button class="md-icon-button md-dense" @click="clearBasedataChange()" v-if="isBasedataEdit">
+                <md-button class="md-icon-button md-dense" @click="clearBasedataChange()" v-if="isBasedataEdit && !isCommitingBaseInfo">
                   <md-icon>clear</md-icon>
                 </md-button>
-                <md-button class="md-icon-button md-dense" @click="submitBasedataChange()" v-if="isBasedataEdit">
+                <md-button class="md-icon-button md-dense" @click="submitBasedataChange()" v-if="isBasedataEdit && !isCommitingBaseInfo">
                   <md-icon>done</md-icon>
                 </md-button>
+                <vue-loading type="spin" color="#d9544e" :size="{ width: '16px', height: '16px'}"
+                  v-if="isCommitingBaseInfo">
+                </vue-loading>
               </div>  
             </md-subheader>
             <md-list-item>
@@ -54,7 +57,11 @@
               </div>
               <md-field v-show="isBasedataEdit">
                 <label>性别</label>
-                <md-input v-model="tempBasedata.sex"></md-input>
+                <md-select v-model="tempBasedata.sex" name='sex'>
+                  <md-option value="0">未知</md-option>
+                  <md-option value="1">男</md-option>
+                  <md-option value="2">女</md-option>
+                </md-select>
               </md-field>
             </md-list-item>
             <md-list-item>
@@ -68,15 +75,18 @@
             <md-subheader>
               联系方式
               <div class="md-toolbar-section-end">
-                <md-button class="md-icon-button md-dense" @click="switchConndataState()" v-if="!isConndataEdit">
+                <md-button class="md-icon-button md-dense" @click="switchConndataState()" v-if="!isConndataEdit && !isCommitingConnInfo">
                   <md-icon>edit</md-icon>
                 </md-button>
-                <md-button class="md-icon-button md-dense" @click="clearConndataChange()" v-if="isConndataEdit">
+                <md-button class="md-icon-button md-dense" @click="clearConndataChange()" v-if="isConndataEdit  && !isCommitingConnInfo">
                   <md-icon>clear</md-icon>
                 </md-button>
-                <md-button class="md-icon-button md-dense" @click="submitConndataChange()" v-if="isConndataEdit">
+                <md-button class="md-icon-button md-dense" @click="submitConndataChange()" v-if="isConndataEdit && !isCommitingConnInfo">
                   <md-icon>done</md-icon>
                 </md-button>
+                <vue-loading type="spin" color="#d9544e" :size="{ width: '16px', height: '16px'}"
+                  v-if="isCommitingConnInfo">
+                </vue-loading>
               </div>    
             </md-subheader>
 
@@ -208,14 +218,6 @@
         <p>IPFS数据上传接口：<a href="https://github.com/Wangcankun/upload-ipfs-api">upload-ipfs-api</a></p>
       </md-tab>
     </md-tabs>
-
-    <!-- <md-dialog-prompt
-      :md-active.sync="active"
-      v-model="value"
-      md-title="What's your name?"
-      md-input-maxlength="30"
-      md-input-placeholder="Type your name..."
-      md-confirm-text="Done" /> -->
 
     <md-dialog :md-active.sync="showCommitDialog">
       <md-dialog-title>游戏信息提交</md-dialog-title>
@@ -403,7 +405,9 @@
       //   { g_address: 'aaaaaa', g_name: '侠客风云传-前传', desc: '就埃里克森大家开始拉家带口垃圾的老咔叽安康阿斯顿垃圾的撒', g_imgurl_mini: '/img/game-1.jpg', isHold: true},
       //   { g_address: 'bbbbbb', g_name: '古剑奇谭', desc: '哈哈哈哈', g_imgurl_mini: '/img/game-2.jpg', isHold: false},
       //   { g_address: 'cccccc', g_name: '轩辕剑', desc: '哈哈哈', g_imgurl_mini: '/img/game-3.jpg', isHold: true}
-      // ]
+      // ],
+      isCommitingBaseInfo: false,
+      isCommitingConnInfo: false
     }),
     methods: {
       testVuex: function () {
@@ -422,7 +426,55 @@
       },
       submitBasedataChange: function () {
         console.log('this.tempBasedata:', this.tempBasedata)
-        // TODO: use nebpay
+        const contract = this.$store.state.dappAddr
+        const fnName   = 'updateUser'
+        const args     = [this.tempBasedata]
+        const options  = { value: '0' }
+        const that     = this;
+        Nasa.call(contract, fnName, args, options).then((payId)=> {
+          console.log('payId:', payId);
+          this.isCommitingBaseInfo = true;
+          Nasa.checkTx(payId).then((resp) => {
+            if (resp.status === 0) {
+              console.error('fail:', resp);
+            } else if (resp.status === 1) {
+              console.log('success:', resp);
+              console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              that.neb.api.call({
+                from:   resp.from,
+                to:     resp.to,
+                value:  0,
+                contract: {
+                  function: 'getUserInfoByAddress',
+                  args:     JSON.stringify([resp.from])
+                },
+                gasPrice: 1000000,
+                gasLimit: 2000000
+              }).then((data) =>{
+                console.log('data', data);
+                var userObj = JSON.parse(data.result);
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                console.log('userObj.data:', userObj.data)
+                that.$store.commit('update_userInfo', userObj.data)
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              }, (error) => {
+                console.error('error:', error)
+              });
+            } else {
+              console.log('waiting:', resp);
+            }
+            that.isCommitingBaseInfo = false
+            that.isBasedataEdit      = false
+          }, (error) => {
+            console.error('queryPayId error:', error);
+            that.isCommitingBaseInfo = false
+            that.isBasedataEdit      = false
+          });
+        }, (error) => {
+          console.error('login error:', error)
+          that.isCommitingBaseInfo = false
+          that.isBasedataEdit      = false
+        })
       },
       clearBasedataChange: function () {
         this.tempBasedata = {
@@ -444,7 +496,55 @@
       },
       submitConndataChange: function () {
         console.log('this.tempConndata:', this.tempConndata)
-        // TODO: use nebpay
+        const contract = this.$store.state.dappAddr
+        const fnName   = 'updateUser'
+        const args     = [this.tempConndata]
+        const options  = { value: '0' }
+        const that     = this;
+        Nasa.call(contract, fnName, args, options).then((payId)=> {
+          console.log('payId:', payId);
+          this.isCommitingConnInfo = true;
+          Nasa.checkTx(payId).then((resp) => {
+            if (resp.status === 0) {
+              console.error('fail:', resp);
+            } else if (resp.status === 1) {
+              console.log('success:', resp);
+              console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              that.neb.api.call({
+                from:   resp.from,
+                to:     resp.to,
+                value:  0,
+                contract: {
+                  function: 'getUserInfoByAddress',
+                  args:     JSON.stringify([resp.from])
+                },
+                gasPrice: 1000000,
+                gasLimit: 2000000
+              }).then((data) =>{
+                console.log('data', data);
+                var userObj = JSON.parse(data.result);
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                console.log('userObj.data:', userObj.data)
+                that.$store.commit('update_userInfo', userObj.data)
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+              }, (error) => {
+                console.error('error:', error)
+              });
+            } else {
+              console.log('waiting:', resp);
+            }
+            that.isCommitingConnInfo = false
+            that.isConndataEdit      = false
+          }, (error) => {
+            console.error('queryPayId error:', error);
+            that.isCommitingConnInfo = false
+            that.isConndataEdit      = false
+          });
+        }, (error) => {
+          console.error('login error:', error)
+          that.isCommitingConnInfo = false
+          that.isConndataEdit      = false
+        })
       },
       clearConndataChange: function () {
         this.tempConndata = {
