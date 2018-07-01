@@ -38,9 +38,6 @@
           </div>
         </md-toolbar>
         <div class="elevation-demo md-elevation-5">
-          <!-- <div class="md-game-limitheight" v-if="gamelist.length === 0"></div>
-          <md-card md-with-hover  v-for="game in gamelist" v-bind:key="game.g_address"
-            @click="jump2GamePage(game.g_address)" class="md-game-card"> -->
           <div class="md-game-limitheight" v-if="$store.state.userInfo.gamelist.length === 0"></div>
           <md-card md-with-hover  v-for="game in $store.state.userInfo.gamelist" v-bind:key="game.g_address"
             @click="jump2GamePage(game.g_address)" class="md-game-card">
@@ -70,9 +67,13 @@
           游戏人生
         </span>
         <div class="md-toolbar-section-end">
-          <md-button class="md-icon-button">
+          <md-button class="md-icon-button" @click="showAddMomentDialog=true"
+            v-if="!isCommitingMoment">
             <md-icon>add</md-icon>
           </md-button>
+          <vue-loading type="spin" color="#d9544e" :size="{ width: '16px', height: '16px'}"
+            v-if="isCommitingMoment">
+          </vue-loading>
         </div>
       </md-toolbar>
       <md-app-content style="height: 85vh; display: flex; flex-direction: column; overflow-y: auto;" >
@@ -82,50 +83,38 @@
             <md-avatar>
               <img src="../assets/avatar.jpg" alt="Avatar">
             </md-avatar>
-            <div class="md-title">{{moment.username}}</div>
-            <p class="md-subhead">{{formatTime(moment.createdate, 'hour')}}</p>
+            <div class="md-title">{{moment.nickname}}</div>
+            <p class="md-subhead">{{formatTime(moment.date, 'hour')}}</p>
           </md-card-header>
-          <md-card-media>
-            <img :src="moment.imgurl" alt="People">
-          </md-card-media>
+          <!-- <md-card-media>
+            <img :src="moment.m_imgurllist" alt="img" v-bind::key="imgurl"
+              v-for="imgurl in moment.m_imgurllist">
+          </md-card-media> -->
           <md-card-content>{{moment.desc}}</md-card-content>
         </md-card>
       </md-app-content>
     </div>
-    <!-- <md-dialog :md-active.sync="showDialog">
-      <md-dialog-title>Preferences</md-dialog-title>
 
-      <md-tabs md-dynamic-height>
-        <md-tab md-label="General">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-        </md-tab>
+<!-- nickname+avatar+m_imgurllist+date -->
+    <md-dialog :md-active.sync="showAddMomentDialog" style="padding: 0 20px;">
+      <md-dialog-title>发圈圈</md-dialog-title>
 
-        <md-tab md-label="Activity">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-        </md-tab>
+      <md-field>
+        <label>我的想法:</label>
+        <md-textarea v-model="newMomentInfo.desc"></md-textarea>
+      </md-field>
 
-        <md-tab md-label="Account">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-        </md-tab>
-      </md-tabs>
+      <!-- <md-field>
+        <label>游戏图标</label>
+        <md-file v-model="localpath" accept="image/*" @md-change="uploadImg"/>
+      </md-field> -->
+      <!-- <img :src="newMomentInfo.m_imgurllist[0]" alt="" width="200" height="100"> -->
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
-        <md-button class="md-primary" @click="showDialog = false">Save</md-button>
+        <md-button class="md-primary" @click="showAddMomentDialog = false">取消</md-button>
+        <md-button class="md-primary" @click="commitMomentInfo">确定</md-button>
       </md-dialog-actions>
-    </md-dialog> -->
-
-
-
-    <!-- <md-button class="md-primary md-raised" @click="showDialog = true">Prompt</md-button> -->
-    <!-- <span v-if="value">Value: {{ value }}</span> -->
+    </md-dialog>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -163,10 +152,11 @@
   export default {
     name: 'Dashboard',
     data: () => ({
-      // momentsExample data
-      showDialog: false,
       uname: '',
-
+      showAddMomentDialog: false,
+      isCommitingMoment: false,
+      newMomentInfo: {},
+      localpath: [],
       momentlist: [
         { username: 'Nodreame', createdate: 1530281304000, imgurl: '/img/card-content-1.jpg', desc: '6666'},
         { username: 'Nodreame', createdate: 1530281388000, imgurl: '/img/card-content-2.jpg', desc: '这家伙很懒，什么也没留下.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea nostrum.'},
@@ -204,6 +194,78 @@
       formatBgImgurl: function (url) {
         return url? url: './img/default_imgurl_mini.png'
       },
+      uploadImg: function (e) {
+        console.log('e', e)
+        const that  = this
+        let file    = e[0]
+        let param   = new FormData()
+        param.append('file', file, file.name)
+        console.log(param.get('file'))
+        let config = {
+          headers: { 'Content-Type': 'multipart/form-data'}
+        }
+        this.$http.post(this.$store.state.imgUrl, param, config)
+          .then(resp => {
+            console.log('resp.data', resp.data)
+            const moment = JSON.parse(JSON.stringify(that.newMomentInfo))
+            moment.m_imgurllist = []
+            moment.m_imgurllist[0] = resp.data.data
+            that.newMomentInfo = moment
+            console.log('that.newMomentInfo:', that.newMomentInfo)
+          })
+      },
+      commitMomentInfo: function () {
+        const contract = this.$store.state.dappAddr
+        const fnName   = 'addMomentInfo'
+        const args     = [this.newMomentInfo]
+        const options  = { value: '0' }
+        const that     = this;
+        Nasa.call(contract, fnName, args, options).then(payId => {
+          console.log('payId:', payId);
+          this.showAddMomentDialog = false
+          this.isCommitingMoment = true
+          Nasa.checkTx(payId).then((resp) => {
+            if (resp.status === 0) {
+              console.error('fail:', resp)
+              that.isCommitingMoment = false
+            } else if (resp.status === 1) {
+              console.log('success:', resp)
+              that.neb.api.call({
+                from:   resp.from,
+                to:     resp.to,
+                value:  0,
+                contract: {
+                  function: 'getUserInfoByAddress',
+                  args:     JSON.stringify([resp.from])
+                },
+                gasPrice: 1000000,
+                gasLimit: 2000000
+              }).then(function (data) {
+                console.log('data', data);
+                var userObj = JSON.parse(data.result);
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                console.log('userObj.data:', userObj.data)
+                that.$store.commit('update_userInfo', userObj.data)
+                console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
+                // that.$router.push('/dashboard');
+                this.newMomentInfo = {}
+              });
+            } else {
+              console.log('waiting:', resp)
+            }
+            that.isCommitingMoment = false
+            that.showAddMomentDialog = false
+          }, (error) => {
+            console.error('queryPayId error:', error)
+            that.isCommitingMoment = false
+            that.showAddMomentDialog = false
+          });
+        }, (error) => {
+          console.error('login error:', error)
+          that.isCommitingMoment = false
+          that.showAddMomentDialog = false
+        })
+      }
     },
     computed: {
       num_games () {
@@ -215,15 +277,6 @@
           return this.$store.state.userInfo.gamelist.length + '个'
         }
       },
-      // num_achipoints () {
-      //   if (this.$store.state.userInfo.gamelist === '-') {
-      //     return '数据获取中...'
-      //   }
-      //   if (this.$store.state.userInfo.gamelist instanceof Array && this.$store.state.userInfo.gamelist.length >= 0) {
-      //     return this.$store.state.userInfo.gamelist.length + '个'
-      //   }
-      // }
-
     },
     created: function () {
       console.log('created:', this.$store.state.userInfo)

@@ -102,7 +102,6 @@
             </div>
           </md-toolbar>
           <md-app-content style="height: 50vh; display: flex; flex-direction: column; overflow-y: auto;" >
-            <!-- <md-list v-for="friend in friendlist" v-bind:key="friend.createdate"> -->
             <md-list v-for="friend in $store.state.userInfo.friendlist" v-bind:key="friend.createdate">
               <md-list-item>
                 <md-avatar>

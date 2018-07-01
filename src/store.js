@@ -8,6 +8,7 @@ export default new Vuex.Store({
     // n1kMKbK6KGMMTRn45xU7SssCoDVLGwGmt6J
     // n1vQTC6WnL9NNjY8RcVMCszLaDqDb73TMtc
     dappAddr: 'n1iLwjVqjFaGqte4ockwTEy1pNZp8gh6D9Q',    // dapp local
+    imgUrl: 'http://wang.nodreame.cn/upload',
     userInfo: {
       u_address: '',
       nickname: '',

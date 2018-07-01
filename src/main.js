@@ -5,7 +5,6 @@ import store from './store'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default-dark.css'
-// import payapi from '@/service'
 import resource from 'vue-resource'
 import VueLoading from 'vue-loading-template'
 
@@ -21,16 +20,22 @@ import Neb from 'nebulas/lib/neb'
 // // console.info('Util', Util)
 // // console.info('Api', Api)
 
+
+// import payapi from '@/service'
+
 const neb = new Neb();
 neb.setRequest(new HttpRequest("https://mainnet.nebulas.io"))
 
+// import VueUploadComponent from 'vue-upload-component'
 const VueUploadComponent = require('vue-upload-component')
-
 import Clipboard from 'clipboard'
+import axios from 'axios'
+
 
 Vue.config.productionTip = false
 Vue.prototype.clipboard  = Clipboard
 Vue.prototype.neb        = neb
+Vue.prototype.$http      = axios
 
 // Vue.prototype.$payapi    = payapi
 Vue.use(VueMaterial)

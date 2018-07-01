@@ -21,6 +21,7 @@
                 </vue-loading>
               </div>  
             </md-subheader>
+            
             <md-list-item>
               <div class="md-list-item-text">
                 <span id="addr">{{$store.state.userInfo.u_address}}</span>
@@ -72,6 +73,7 @@
             </md-list-item>
             
             <md-divider></md-divider>
+
             <md-subheader>
               联系方式
               <div class="md-toolbar-section-end">
@@ -178,7 +180,9 @@
             <md-card md-with-hover v-bind:key="game.g_address" v-for="game in $store.state.userInfo.gamelist" v-if="game.isHold">
               <md-card-media-cover md-solid>
                   <md-card-media md-ratio="1:1">
+                    <!-- <img :src="game.g_imgurl_mini" alt="" style="top: 0; transform: translateY(0);"> -->
                     <img :src="formatBgImgurl(game.g_imgurl_mini)" alt="" style="top: 0; transform: translateY(0);">
+                    <!-- <img :src="gameinfo_modify.g_imgurl_mini" alt="" width="200" height="100"> -->
                   </md-card-media>
                   <md-card-area style="background-color: rgba(0,0,0,.54); color: #fff;">
                     <md-card-header>
@@ -251,32 +255,11 @@
         <md-input v-model="gameinfo_commit.starturl"></md-input>
       </md-field>
 
-      <!-- <md-field>
+      <md-field>
         <label>游戏图标</label>
-        <md-file v-model="gameinfo_commit.g_imgurl_mini" />
-        <file-upload
-          ref="upload"
-          v-model="files"
-          post-action="/post.method"
-          put-action="/put.method"
-          @input-file="inputFile"
-          @input-filter="inputFilter">
-          上传文件
-        </file-upload>
-        <button v-show="!$refs.upload || !$refs.upload.active" @click.prevent="$refs.upload.active = true" 
-          type="button">开始上传</button>
-        <button v-show="$refs.upload && $refs.upload.active" @click.prevent="$refs.upload.active = false" 
-          type="button">停止上传</button>
+        <md-file v-model="localpath" accept="image/*" @md-change="uploadImg"/>
       </md-field>
-
-      <md-field>
-        <label>游戏背景</label>
-        <md-file v-model="gameinfo_commit.g_imgurl_bg" />
-      </md-field>
-      <md-field>
-        <label>游戏截图</label>
-        <md-file v-model="gameinfo_commit.g_imgurl_exlist" />
-      </md-field> -->
+      <img :src="gameinfo_commit.g_imgurl_mini" alt="" width="200" height="100">
 
       <md-dialog-actions>
         <md-button class="md-primary" @click="showCommitDialog = false">取消</md-button>
@@ -317,25 +300,13 @@
         <md-input v-model="gameinfo_modify.starturl"></md-input>
       </md-field>
 
-      <!-- <md-field>
-        <label>游戏图标</label>
-        <md-file v-model="gameinfo_commit.g_imgurl_mini" />
-        <file-upload
-          ref="upload"
-          v-model="files"
-          post-action="/post.method"
-          put-action="/put.method"
-          @input-file="inputFile"
-          @input-filter="inputFilter">
-          上传文件
-        </file-upload>
-        <button v-show="!$refs.upload || !$refs.upload.active" @click.prevent="$refs.upload.active = true" 
-          type="button">开始上传</button>
-        <button v-show="$refs.upload && $refs.upload.active" @click.prevent="$refs.upload.active = false" 
-          type="button">停止上传</button>
-      </md-field>
-
       <md-field>
+        <label>游戏图标</label>
+        <md-file v-model="localpathModify" accept="image/*" @md-change="uploadImgModify"/>
+      </md-field>
+      <img :src="gameinfo_modify.g_imgurl_mini" alt="" width="200" height="100">
+
+      <!-- <md-field>
         <label>游戏背景</label>
         <md-file v-model="gameinfo_commit.g_imgurl_bg" />
       </md-field>
@@ -406,7 +377,10 @@
       //   { g_address: 'cccccc', g_name: '轩辕剑', desc: '哈哈哈', g_imgurl_mini: '/img/game-3.jpg', isHold: true}
       // ],
       isCommitingBaseInfo: false,
-      isCommitingConnInfo: false
+      isCommitingConnInfo: false,
+      // file
+      localpath: [],
+      localpathModify: []
     }),
     methods: {
       testVuex: function () {
@@ -553,6 +527,7 @@
         }
         this.isConndataEdit = false
       },
+
       // dev
       userLevelup: function () {
         // alert('TODO:updateToDev')
@@ -649,6 +624,7 @@
                 console.log('this.$store.state.userInfo:', that.$store.state.userInfo)
                 // that.$router.push('/dashboard');
                 that.isCommitingGames = false
+                this.gameinfo_commit = {}
               });
             } else {
               console.log('waiting:', resp)
@@ -754,6 +730,8 @@
       //     this.$message.success(e.text + ' 已复制到剪贴板！');
       //   });
       // },
+
+      // set format
       formatTime: function (date, type) {
         const dateTime = new Date(date)
         let strResult = '';
@@ -784,6 +762,46 @@
       formatBgImgurl: function (url) {
         return url? url: './img/default_imgurl_mini.png'
       },
+
+
+      uploadImg: function (e) {
+        console.log('e', e)
+        const that  = this
+        let file    = e[0]
+        let param   = new FormData()
+        param.append('file', file, file.name)
+        console.log(param.get('file'))
+        let config = {
+          headers: { 'Content-Type': 'multipart/form-data'}
+        }
+        this.$http.post(this.$store.state.imgUrl, param, config)
+          .then(resp => {
+            console.log('resp.data', resp.data)
+            const game = JSON.parse(JSON.stringify(that.gameinfo_commit))
+            game.g_imgurl_mini = resp.data.data
+            that.gameinfo_commit = game
+            console.log('that.gameinfo_commit:', that.gameinfo_commit)
+          })
+      },
+      uploadImgModify: function (e) {
+        console.log('e', e)
+        const that  = this
+        let file    = e[0]
+        let param   = new FormData()
+        param.append('file', file, file.name)
+        console.log(param.get('file'))
+        let config = {
+          headers: { 'Content-Type': 'multipart/form-data'}
+        }
+        this.$http.post(this.$store.state.imgUrl, param, config)
+          .then(resp => {
+            console.log('resp.data', resp.data)
+            const game = JSON.parse(JSON.stringify(that.gameinfo_modify))
+            game.g_imgurl_mini = resp.data.data
+            that.gameinfo_modify = game
+            console.log('that.gameinfo_modify:', that.gameinfo_modify)
+          })
+      }
     },
     created: function () {
       console.log('created')
